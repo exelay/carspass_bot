@@ -1,11 +1,18 @@
-msg_hello = "<Hello message here>"
-msg_help = [
-    "<Help message here>",
-    "/start - Start the bot",
-    "/help - This help message",
-]
+msg_hello = (
+    "Привет, {}! Чтобы получать уведомления о новых автомобилях, "
+    "нажми на кнопку ниже."
+)
+msg_help = (
+    "Help message here\n"
+    "/start - Start the bot\n"
+    "/help - This help message"
+)
+msg_auth_success = "Авторизация прошла успешно. Твой код: {}"
+msg_auth_fail = "Авторизация не удалась, мы не нашли пользователя с таким номером."
 
 MESSAGES = {
-    'hello': "\n".join(msg_hello),
-    'help': "\n".join(msg_help),
+    'hello': msg_hello,
+    'help': msg_help,
+    'auth_success': msg_auth_success,
+    'auth_fail': msg_auth_fail,
 }
