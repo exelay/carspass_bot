@@ -1,2 +1,2 @@
-web: python app.py
-worker: python api_main.py
+web: uvicorn api_main:app --host=0.0.0.0 --port=${PORT:-5000}
+worker: python app.py
