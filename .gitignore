@@ -17,4 +17,3 @@ venv/
 # Service files
 .env
 debug.log
-*.db
