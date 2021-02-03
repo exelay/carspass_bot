@@ -1,10 +1,10 @@
 import json
+import sqlite3
 import requests
 from aiogram import types
 
-from loader import dp
+from loader import dp, db
 from messages import MESSAGES
-from utils.db_api.commands import add_user
 
 
 @dp.message_handler(content_types=types.ContentTypes.CONTACT)
@@ -18,7 +18,10 @@ async def auth_handler(message: types.Message):
     response_json = json.loads(response.text)
     if response.status_code == 200:
         code = response_json['code']
+        try:
+            db.add_user(id_, phone, code)
+        except sqlite3.IntegrityError:
+            pass
         await message.answer(MESSAGES['auth_success'].format(code))
-        await add_user(id_, phone, code)
     else:
         await message.answer(MESSAGES['auth_fail'])

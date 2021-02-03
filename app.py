@@ -1,15 +1,11 @@
 from loader import db
-from utils.db_api import db_gino
 
 
 async def on_startup(dp):
-    print("Подключаем БД")
-    await db_gino.on_startup(dp)
-    print("Готово")
-
-    print("Создаем таблицы")
-    await db.gino.create_all()
-    print("Готово")
+    try:
+        db.create_table_users()
+    except Exception as err:
+        print(err)
 
 
 if __name__ == '__main__':

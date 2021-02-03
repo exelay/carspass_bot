@@ -1,14 +1,18 @@
 import uvicorn
 from fastapi import FastAPI
 
-from routers import notification
+from api_routers import notification
 
 
 tags_metadata = [
     {
         "name": "notification",
         "description": "Notify user about new ad.",
-    }
+    },
+    {
+        "name": "change_password",
+        "description": "Send message with link for change password.",
+    },
 ]
 app = FastAPI(
     title="Spider API for CarsPass Telegram Bot",
