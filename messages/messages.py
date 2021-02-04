@@ -7,7 +7,7 @@ msg_help = (
     "/start - Start the bot\n"
     "/help - This help message"
 )
-msg_auth_success = "Авторизация прошла успешно. Твой код: {}"
+msg_auth_success = "Авторизация прошла успешно.\nТвой код: <code>{}</code>"
 msg_auth_fail = "Авторизация не удалась, мы не нашли пользователя с таким номером."
 
 MESSAGES = {
