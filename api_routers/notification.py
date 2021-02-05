@@ -1,8 +1,24 @@
+from urllib import parse
 from fastapi import APIRouter
 
 from loader import db, dp
 
 router = APIRouter()
+
+
+async def make_query_msg(link):
+    link_params = parse.parse_qs(parse.urlsplit(link).query)
+    query_params = {k: v[0] for k, v in link_params.items()}
+
+    brand, model = query_params.get('brand').title(), query_params.get('model').title()
+    price_min, price_max = query_params.get('price_min'), query_params.get('price_max')
+    city = query_params.get('city')
+
+    price_min = f' от {price_min}₽' if price_min else ''
+    price_max = f' до {price_max}₽' if price_max else ''
+    city = f' в городе {city}' if city else ''
+
+    return f"{brand} {model}{city}{price_min}{price_max}"
 
 
 @router.post('/notify', tags=['notification'])
@@ -14,8 +30,10 @@ async def ad_notification(phone: str, link: str, count: int):
     if not user:
         return {'Error': f'User with phone {phone} not found.'}
     user_id = user[0]
+    query_msg = await make_query_msg(link)
     message = (
-        f'🧨Появилось новое объявление по твоему запросу.\n'
+        f'🧨Появилось новое объявление по твоему запросу:\n'
+        f'{query_msg}\n'
         f'Всего объявлений: {count}.\n'
         f'<a href="{link}">Проверить</a>'
     )
