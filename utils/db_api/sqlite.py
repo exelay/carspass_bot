@@ -59,6 +59,9 @@ class Database:
         sql = "SELECT * FROM Users"
         return self.execute(sql, fetchall=True)
 
+    def count_users(self):
+        return self.execute("SELECT COUNT(*) FROM Users;", fetchone=True)
+
 
 def logging(statement):
-    logger.info(f"Executing:\n{statement}")
+    logger.info(f"Executing: {statement}")

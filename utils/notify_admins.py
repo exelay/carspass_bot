@@ -4,12 +4,13 @@ from aiogram import Dispatcher
 from data.config import ADMINS
 
 
-async def on_startup_notify(dp: Dispatcher):
-    message = "Бот запущен!"
+async def on_startup_notify(dp: Dispatcher, db):
+    message = "Бот запущен! Всего пользователей: {}"
 
     for admin in ADMINS:
         try:
-            await dp.bot.send_message(admin, message)
+            count = db.count_users()[0]
+            await dp.bot.send_message(admin, message.format(count))
         except Exception as err:
             logger.error(f"Message is not delivered. Exception: {err}")
 
