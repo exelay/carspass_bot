@@ -1,7 +1,9 @@
 from urllib import parse
+from loguru import logger
 from fastapi import APIRouter
 
 from loader import db, dp
+from utils.notify_admins import error_notify
 
 router = APIRouter()
 
@@ -26,19 +28,23 @@ async def ad_notification(phone: str, link: str, count: int):
     """
     A **POST** method that notify user about new ad for user's search request.
     """
-    user = db.select_user(phone=phone)
-    if not user:
-        return {'Error': f'User with phone {phone} not found.'}
-    user_id = user[0]
-    query_msg = await make_query_msg(link)
-    message = (
-        f'🧨Появилось новое объявление по твоему запросу:\n'
-        f'{query_msg}\n'
-        f'Всего объявлений: {count}.\n'
-        f'<a href="{link}">Проверить</a>'
-    )
-    await dp.bot.send_message(user_id, message)
-    return {'status': 'OK'}
+    try:
+        user = db.select_user(phone=phone)
+        if not user:
+            return {'Error': f'User with phone {phone} not found.'}
+        user_id = user[0]
+        query_msg = await make_query_msg(link)
+        message = (
+            f'🧨Появилось новое объявление по твоему запросу:\n'
+            f'{query_msg}\n'
+            f'Всего объявлений: {count}.\n'
+            f'<a href="{link}">Проверить</a>'
+        )
+        await dp.bot.send_message(user_id, message)
+        return {'status': 'OK'}
+    except Exception as err:
+        await error_notify(dp, err)
+        logger.error(f"Something went wrong: {err}")
 
 
 @router.post('/change_password', tags=['change_password'])
@@ -46,12 +52,16 @@ async def change_password(phone: str, link: str):
     """
     A **POST** method that send link for change password.
     """
-    user = db.select_user(phone=phone)
-    if not user:
-        return {'Error': f'User with phone {phone} not found.'}
-    user_id = user[0]
-    message = (
-        f'<a href="{link}">Сменить пароль</a>'
-    )
-    await dp.bot.send_message(user_id, message)
-    return {'status': 'OK'}
+    try:
+        user = db.select_user(phone=phone)
+        if not user:
+            return {'Error': f'User with phone {phone} not found.'}
+        user_id = user[0]
+        message = (
+            f'<a href="{link}">Сменить пароль</a>'
+        )
+        await dp.bot.send_message(user_id, message)
+        return {'status': 'OK'}
+    except Exception as err:
+        await error_notify(dp, err)
+        logger.error(f"Something went wrong: {err}")
