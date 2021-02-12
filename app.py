@@ -1,5 +1,7 @@
 from loguru import logger
+
 from loader import db
+from utils.notify_admins import on_startup_notify
 
 
 async def on_startup(dp):
@@ -10,6 +12,7 @@ async def on_startup(dp):
     except Exception as err:
         logger.error(f'Table creation error: {err}')
     else:
+        await on_startup_notify(dp)
         logger.info('Table successfully created!')
 
 
