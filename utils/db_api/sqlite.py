@@ -1,4 +1,5 @@
 import sqlite3
+from loguru import logger
 
 
 class Database:
@@ -11,7 +12,7 @@ class Database:
 
     def execute(self, sql: str, parameters: tuple = (), fetchone=False, fetchall=False, commit=False):
         connection = self.connection
-        connection.set_trace_callback(logger)
+        connection.set_trace_callback(logging)
         cursor = connection.cursor()
         data = None
         cursor.execute(sql, parameters)
@@ -54,11 +55,10 @@ class Database:
         sql, parameters = self.format_args(sql, kwargs)
         return self.execute(sql, parameters, fetchone=True)
 
+    def select_all_users(self):
+        sql = "SELECT * FROM Users"
+        return self.execute(sql, fetchall=True)
 
-def logger(statement):
-    print(f"""
-_____________________________________________________        
-Executing: 
-{statement}
-_____________________________________________________
-""")
+
+def logging(statement):
+    logger.info(f"Executing:\n{statement}")
