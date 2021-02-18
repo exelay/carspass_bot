@@ -5,8 +5,10 @@ from data.config import ADMINS
 
 
 async def on_startup_notify(dp: Dispatcher, db):
-    text = "Бот запущен! Всего пользователей: {}"
-
+    text = (
+        "#for_admins\n"
+        "Бот запущен! Всего пользователей: {}"
+    )
     for admin in ADMINS:
         try:
             count = db.count_users()[0]
@@ -16,8 +18,10 @@ async def on_startup_notify(dp: Dispatcher, db):
 
 
 async def error_notify(dp: Dispatcher, error):
-    text = f"Что-то пошло не так! Ошибка: {error}"
-
+    text = (
+        "#for_admins\n"
+        f"Что-то пошло не так! Ошибка: {error}"
+    )
     for admin in ADMINS:
         try:
             await dp.bot.send_message(admin, text)
@@ -28,8 +32,10 @@ async def error_notify(dp: Dispatcher, error):
 async def new_user_notify(dp: Dispatcher, message: types.Message):
     name = message.from_user.first_name
     phone = message.contact.phone_number
-    text = f"Авторизовался новый пользователь:\n{name} | {phone}"
-
+    text = (
+        "#for_admins\n"
+        f"Авторизовался новый пользователь:\n{name} | {phone}"
+    )
     for admin in ADMINS:
         try:
             await dp.bot.send_message(admin, text)

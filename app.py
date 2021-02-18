@@ -3,6 +3,7 @@ from sqlite3 import OperationalError
 
 from loader import db
 from utils.notify_admins import on_startup_notify
+from utils.set_default_commands import set_default_commands
 
 
 async def on_startup(dp):
@@ -17,6 +18,7 @@ async def on_startup(dp):
         logger.error(f'Table creation error: {err}')
 
     await on_startup_notify(dp, db)
+    await set_default_commands(dp)
 
 
 if __name__ == '__main__':
