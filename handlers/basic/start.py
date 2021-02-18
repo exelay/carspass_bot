@@ -11,7 +11,10 @@ async def start_command(message: types.Message):
         [
             types.KeyboardButton("🚨Авторизоваться🚨", request_contact=True)
         ],
-    ], one_time_keyboard=True)
+        [
+            types.KeyboardButton("💵Подтвердить оплату💵")
+        ]
+    ], one_time_keyboard=True, resize_keyboard=True)
     user_name = message.from_user.first_name
     text = MESSAGES['hello'].format(user_name)
     await message.answer(text, reply_markup=markup)

@@ -34,3 +34,23 @@ async def show_paid_button(message: types.Message):
     except Exception as err:
         await error_notify(dp, err)
         logger.error(f"Something went wrong: {err}")
+
+
+@dp.message_handler()
+async def proof_payment(message: types.Message):
+    try:
+        if message.text == "💵Подтвердить оплату💵":
+            user_id = message.from_user.id
+            phone = db.select_user(id=user_id)[1]
+            text = (
+                "#for_admins\n"
+                f"Пользователь с номером <code>+{phone}</code> хочет подтвердить оплату."
+            )
+            for admin in ADMINS:
+                await dp.bot.send_message(admin, text)
+            await message.answer('Заявка на подтверждение отправлена, ожидайте.')
+        else:
+            pass
+    except Exception as err:
+        await error_notify(dp, err)
+        logger.error(f"Something went wrong: {err}")
