@@ -3,6 +3,7 @@ import sqlite3
 import requests
 from loguru import logger
 from aiogram import types
+from aiogram.dispatcher.filters.builtin import Command
 
 from loader import dp, db
 from utils.notify_admins import new_user_notify, error_notify
@@ -32,3 +33,16 @@ async def auth_handler(message: types.Message):
     except Exception as err:
         await error_notify(dp, err)
         logger.error(f"Something went wrong: {err}")
+
+
+@dp.message_handler(Command('auth'))
+async def auth_command(message: types.Message):
+    markup = types.ReplyKeyboardMarkup([
+        [
+            types.KeyboardButton("🚨Авторизоваться🚨", request_contact=True)
+        ],
+        [
+            types.KeyboardButton("💵Подтвердить оплату💵")
+        ]
+    ], one_time_keyboard=True, resize_keyboard=True)
+    await message.answer("Кнопка авторизации ниже.", reply_markup=markup)
