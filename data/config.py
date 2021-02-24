@@ -9,4 +9,5 @@ TOKEN = str(os.getenv("TOKEN"))
 ADMINS = [
     305516197,
     289349990,
+    809752829,
 ]
