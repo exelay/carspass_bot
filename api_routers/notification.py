@@ -48,15 +48,11 @@ async def ad_notification(phone: str, link: str, count: int):
 
 
 @router.post('/change_password', tags=['change_password'])
-async def change_password(phone: str, link: str):
+async def change_password(user_id: str, link: str):
     """
     A **POST** method that send link for change password.
     """
     try:
-        user = db.select_user(phone=phone)
-        if not user:
-            return {'Error': f'User with phone {phone} not found.'}
-        user_id = user[0]
         message = (
             f'<a href="{link}">Сменить пароль</a>'
         )
@@ -65,3 +61,4 @@ async def change_password(phone: str, link: str):
     except Exception as err:
         await error_notify(dp, err)
         logger.error(f"Something went wrong: {err}")
+        return {'Error': f'User with id {user_id} did not start a bot.'}
