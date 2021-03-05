@@ -24,7 +24,7 @@ async def make_query_msg(link):
 
 
 @router.post('/notify', tags=['notification'])
-async def ad_notification(user_id: str, link: str, count: int):
+async def ad_notification(tg_id: str, link: str, count: int):
     """
     A **POST** method that notify user about new ad for user's search request.
     """
@@ -36,7 +36,7 @@ async def ad_notification(user_id: str, link: str, count: int):
             f'Всего объявлений: {count}.\n'
             f'<a href="{link}">Проверить</a>'
         )
-        await dp.bot.send_message(user_id, message)
+        await dp.bot.send_message(tg_id, message)
         return {'status': 'OK'}
     except Exception as err:
         await error_notify(dp, err)
@@ -44,7 +44,7 @@ async def ad_notification(user_id: str, link: str, count: int):
 
 
 @router.post('/change_password', tags=['change_password'])
-async def change_password(user_id: str, link: str):
+async def change_password(tg_id: str, link: str):
     """
     A **POST** method that send link for change password.
     """
@@ -52,9 +52,9 @@ async def change_password(user_id: str, link: str):
         message = (
             f'<a href="{link}">Сменить пароль</a>'
         )
-        await dp.bot.send_message(user_id, message)
+        await dp.bot.send_message(tg_id, message)
         return {'status': 'OK'}
     except Exception as err:
         await error_notify(dp, err)
         logger.error(f"Something went wrong: {err}")
-        return {'Error': f'User with id {user_id} did not start a bot.'}
+        return {'Error': f'User with id {tg_id} did not start a bot.'}
