@@ -1,3 +1,5 @@
+import requests
+
 from aiogram import types
 from aiogram.dispatcher.filters.builtin import CommandStart
 
@@ -18,7 +20,10 @@ async def start_command(message: types.Message):
         auth_code = None
     if auth_code:
         text = MESSAGES['hello'].format(user_name)
-        # Отправить запрос на сервер
+        requests.get("https://app.carspass.ru/webhook/telegram", params={
+            'tg_id': user_id,
+            'code': auth_code
+        })
     else:
         text = MESSAGES['not_hello'].format(user_name)
     await message.answer(text, reply_markup=start_markup)
