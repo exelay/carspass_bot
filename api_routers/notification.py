@@ -2,7 +2,7 @@ from urllib import parse
 from loguru import logger
 from fastapi import APIRouter
 
-from loader import db, dp
+from loader import dp
 from utils.notify_admins import error_notify
 
 router = APIRouter()
@@ -24,15 +24,11 @@ async def make_query_msg(link):
 
 
 @router.post('/notify', tags=['notification'])
-async def ad_notification(phone: str, link: str, count: int):
+async def ad_notification(user_id: str, link: str, count: int):
     """
     A **POST** method that notify user about new ad for user's search request.
     """
     try:
-        user = db.select_user(phone=phone)
-        if not user:
-            return {'Error': f'User with phone {phone} not found.'}
-        user_id = user[0]
         query_msg = await make_query_msg(link)
         message = (
             f'🧨Появилось новое объявление по твоему запросу:\n'

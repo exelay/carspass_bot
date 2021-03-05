@@ -12,7 +12,6 @@ from keyboards import start_markup
 async def start_command(message: types.Message):
     user_id = message.from_user.id
     user_name = message.from_user.first_name
-    print(message.text)
     try:
         auth_code = message.text.split()[1]
         print(auth_code)
