@@ -6,6 +6,7 @@ from aiogram.dispatcher.filters.builtin import CommandStart
 from loader import dp
 from messages import MESSAGES
 from keyboards import start_markup
+from utils.notify_admins import new_user_notify
 
 
 @dp.message_handler(CommandStart())
@@ -19,10 +20,12 @@ async def start_command(message: types.Message):
         auth_code = None
     if auth_code:
         text = MESSAGES['hello'].format(user_name)
-        requests.get("https://app.carspass.ru/webhook/telegram", params={
+        response = requests.get("https://app.carspass.ru/webhook/telegram", params={
             'tg_id': user_id,
             'code': auth_code
         })
+        if response.status_code == 200:
+            await new_user_notify(dp, message)
     else:
         text = MESSAGES['not_hello'].format(user_name)
     await message.answer(text, reply_markup=start_markup)

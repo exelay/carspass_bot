@@ -31,10 +31,10 @@ async def error_notify(dp: Dispatcher, error):
 
 async def new_user_notify(dp: Dispatcher, message: types.Message):
     name = message.from_user.first_name
-    phone = message.contact.phone_number
+    user_id = message.from_user.id
     text = (
         "#for_admins\n"
-        f"Авторизовался новый пользователь:\n{name} | {phone}"
+        f"Авторизовался новый пользователь:\n{name} | {user_id}"
     )
     for admin in ADMINS:
         try:
