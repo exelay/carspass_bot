@@ -17,7 +17,7 @@ async def on_startup(dp):
     except Exception as err:
         logger.error(f'Table creation error: {err}')
 
-    await on_startup_notify(dp, db)
+    # await on_startup_notify(dp, db)
     await set_default_commands(dp)
 
 
