@@ -15,7 +15,6 @@ async def start_command(message: types.Message):
     user_name = message.from_user.first_name
     try:
         auth_code = message.text.split()[1]
-        print(auth_code)
     except IndexError:
         auth_code = None
     if auth_code:
