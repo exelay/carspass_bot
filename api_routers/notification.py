@@ -56,7 +56,7 @@ async def new_make_query_msg(filters):
     return f"{filters.brand} {filters.model}{city}{price_min}{price_max}"
 
 
-@router.post('/notify', tags=['notification'])
+@router.post('/new_notify', tags=['notification'])
 async def new_ad_notification(notification: Notification):
     """
     A **POST** method that notify user about new ad for user's search request.
