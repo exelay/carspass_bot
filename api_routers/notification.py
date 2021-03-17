@@ -2,7 +2,7 @@ from typing import Optional, List
 from urllib import parse
 from loguru import logger
 
-from fastapi import APIRouter, Body
+from fastapi import APIRouter
 
 from loader import dp
 from utils.notify_admins import error_notify
@@ -47,7 +47,7 @@ class Notification(BaseModel):
     items: List[Item]
 
 
-async def make_query_msg(filters):
+async def new_make_query_msg(filters):
 
     price_min = f' от {filters.price_min}₽' if filters.price_min else ''
     price_max = f' до {filters.price_max}₽' if filters.price_max else ''
@@ -57,14 +57,14 @@ async def make_query_msg(filters):
 
 
 @router.post('/notify', tags=['notification'])
-async def ad_notification(notification: Notification):
+async def new_ad_notification(notification: Notification):
     """
     A **POST** method that notify user about new ad for user's search request.
     """
     try:
         count = notification.count
         tg_id = notification.tg_id
-        query_msg = await make_query_msg(notification.filters)
+        query_msg = await new_make_query_msg(notification.filters)
         message = (
             f'🧨Появились новые объявления по твоему запросу:\n'
             f'<b>{query_msg}</b>\n'
@@ -73,6 +73,41 @@ async def ad_notification(notification: Notification):
         )
         for item in notification.items:
             message += f'🔸 <a href="{item.link}">{item.title}</a>\n'
+        await dp.bot.send_message(tg_id, message)
+        return {'status': 'OK'}
+    except Exception as err:
+        await error_notify(dp, err)
+        logger.error(f"Something went wrong: {err}")
+
+
+async def make_query_msg(link):
+    link_params = parse.parse_qs(parse.urlsplit(link).query)
+    query_params = {k: v[0] for k, v in link_params.items()}
+
+    brand, model = query_params.get('brand').title(), query_params.get('model').title()
+    price_min, price_max = query_params.get('price_min'), query_params.get('price_max')
+    city = query_params.get('city')
+
+    price_min = f' от {price_min}₽' if price_min else ''
+    price_max = f' до {price_max}₽' if price_max else ''
+    city = f' в городе {city}' if city else ''
+
+    return f"{brand} {model}{city}{price_min}{price_max}"
+
+
+@router.post('/notify', tags=['notification'])
+async def ad_notification(tg_id: str, link: str, count: int):
+    """
+    A **POST** method that notify user about new ad for user's search request.
+    """
+    try:
+        query_msg = await make_query_msg(link)
+        message = (
+            f'🧨Появилось новое объявление по твоему запросу:\n'
+            f'{query_msg}\n'
+            f'Всего объявлений: {count}.\n'
+            f'<a href="{link}">Проверить</a>'
+        )
         await dp.bot.send_message(tg_id, message)
         return {'status': 'OK'}
     except Exception as err:
