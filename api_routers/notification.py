@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional, List
 from urllib import parse
 from loguru import logger
@@ -15,7 +16,7 @@ router = APIRouter()
 class Filters(BaseModel):
     brand: str
     model: str
-    city: str
+    city: Optional[str] = None
     sites: List[str]
     radius: Optional[str] = None
     price_min: Optional[str] = None
@@ -38,6 +39,7 @@ class Item(BaseModel):
     link: str
     img_link: str
     price: str
+    publish_date: str
 
 
 class Notification(BaseModel):
@@ -45,6 +47,7 @@ class Notification(BaseModel):
     count: str
     filters: Filters
     items: List[Item]
+    link: str
 
 
 async def new_make_query_msg(filters):
@@ -66,14 +69,16 @@ async def new_ad_notification(notification: Notification):
         tg_id = notification.tg_id
         query_msg = await new_make_query_msg(notification.filters)
         message = (
-            f'🧨Появились новые объявления по твоему запросу:\n'
+            f'🧨 По вашему <a href="{notification.link}">запросу</a>:\n'
             f'<b>{query_msg}</b>\n'
             f'Всего объявлений: {count}.\n'
             '📜 Новые объявления:\n'
         )
         for item in notification.items:
-            message += f'🔸 <a href="{item.link}">{item.title}</a>\n'
-        await dp.bot.send_message(tg_id, message)
+            date = datetime.strptime(item.publish_date, "%Y-%m-%dT%H:%M:%S")
+            publish_date = datetime.strftime(date, "%H:%M %d.%m.%Y")
+            message += f'🔸 {publish_date} <a href="{item.link}">{item.title}</a> {item.price}₽\n'
+        await dp.bot.send_message(tg_id, message, disable_web_page_preview=True)
         return {'status': 'OK'}
     except Exception as err:
         await error_notify(dp, err)
