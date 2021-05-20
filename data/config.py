@@ -1,13 +1,10 @@
-import os
-from dotenv import load_dotenv
+from typing import List, AnyStr
 
-load_dotenv()
+from environs import Env
+
+env = Env()
+env.read_env()
 
 # Environment variables
-TOKEN = str(os.getenv("TOKEN"))
-
-ADMINS = [
-    305516197,
-    289349990,
-    809752829,
-]
+TOKEN: AnyStr = env.str("TOKEN")
+ADMINS: List = env.list("ADMINS")
